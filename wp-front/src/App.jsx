@@ -1,35 +1,33 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { useEffect, useState } from 'react'
+import axios from "axios"
+import Blog from './components/blog';
 
-function App() {
-  const [count, setCount] = useState(0)
+export default function App() {
+  const [posts, setPosts] = useState([]);
+
+  const fetchPosts = () => {
+    axios
+      .get("https://digiwebcam.in/market/wp-json/wp/v2/posts")
+      .then((res) => {
+         //console.log(res.data);  // Logs the fetched posts to the console.
+        setPosts(res.data);
+      });
+  }
+
+  useEffect(() => {
+    fetchPosts()
+  }, [])
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <div>
+      {
+        posts.map((item) => (
+          <Blog
+            key={item.id} // Add a unique key prop here
+            post={item}
+          />
+        ))
+      }
+    </div>
+  );
 }
-
-export default App
